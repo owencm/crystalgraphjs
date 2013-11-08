@@ -26,7 +26,7 @@ var VIEW = (function(lib) {
 		// Loop through and draw all connecting lines
 		for (var i = 0; i < nodeCount; i++) {
 			var node = graph.getNode(i);
-			var adjascentNodes = graph.getAdjById(i);
+			var adjascentNodes = graph.getAdj(i);
 			for (var j = 0; j < adjascentNodes.length; j++) {
 				var tempNode = graph.getNode(adjascentNodes[j].id);
 				drawLine(node.x, node.y, tempNode.x, tempNode.y);

@@ -35,7 +35,7 @@ var GRAPH = (function(lib) {
 	}
 
 	// This returns an array of nodes and their adjascency to the node with id=id
-	var getAdjById = function(id) {
+	var getAdj = function(id) {
 		var sNodes = [];
 		// For each node, check for a connection
 		for (var i = 0; i < getNodeCount(); i++) {
@@ -47,8 +47,8 @@ var GRAPH = (function(lib) {
 	}
 
 	var update = function(sNode) {
-		var id = nodes.id;
-		nodes.id = {x: sNode.x, y: sNode.y};
+		var id = sNode.id;
+		nodes[id] = {x: sNode.x, y: sNode.y};
 	}
 
 	var debug = function() {
@@ -57,7 +57,7 @@ var GRAPH = (function(lib) {
 	}
 
 	return { 
-		getAdjById: getAdjById,
+		getAdj: getAdj,
 		setAdj: setAdj,
 		getNode: getNode,
 		addNode: addNode,
