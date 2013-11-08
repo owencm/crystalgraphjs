@@ -38,13 +38,27 @@ var LAYOUT = (function(lib) {
 		var nodeCount = graph.getNodeCount();
 		for (var i = 0; i < nodeCount; i++) {
 			var node = graph.getNode(i);
-
 			// For each node...
+
 			// Nodes repel edges
 			var dist = [config.width - node.x, config.height - node.y, node.x, node.y];
 			for (var distIndex = 0; distIndex < 4; distIndex++) {
 				lib.assert(dist[distIndex]>0, "A node is on an edge (divide by 0)");
 				score += config.boundaryWeight * 1/dist[distIndex];
+			}
+
+			// Edges should have minimum possible length
+			// Get each outgoing edge
+			var adjascentNodes = graph.getAdj(node.id);
+			// Remove links to earlier nodes so we don't count them twice!
+			adjascentNodes = adjascentNodes.filter(function(adjNode) { return (adjNode.id > node.id); });
+			// console.log("Node "+node.id+ " has "+adjascentNodes.length+ " edges");
+			var adjCount = adjascentNodes.length;
+			for (var adjIndex = 0; adjIndex < adjCount; adjIndex++) {
+				var adjNode = adjascentNodes[adjIndex];
+				var dist = getDist(node, adjNode);
+				// console.log("Edge between "+node.id +" and "+adjNode.id+" is "+dist);
+				score += config.edgeLengthWeight * Math.pow(dist, 2);
 			}
 
 			// Start at current node and loop over remaining in list
@@ -62,13 +76,15 @@ var LAYOUT = (function(lib) {
 	var step = function(graph, time) {
 		var actions = getActions(graph, time);
 		var actionsCount = actions.length;
-		var bestAction = undefined;
-		var bestScore;
+		var bestAction;
+		var bestScore = Infinity;
 		for (var i = 0; i < actionsCount; i++) {
 			var action = actions[i];
 			var undoAction = applyAction(graph, action);
 			var score = getScore(graph);
-			if (score < bestScore || bestAction == undefined) {
+			// console.log(JSON.stringify(action) + " scores "+ score);
+			if (score < bestScore) {
+				// console.log("^^^ best so far");
 				bestScore = score;
 				bestAction = action;
 			}
@@ -80,7 +96,7 @@ var LAYOUT = (function(lib) {
 	/*	This takes a graph and optimises it's layout. Ninja huh? */
 	var layout = function(graph) {
 		var time = 0;
-		var steps = 100;
+		var steps = config.steps;
 		for (var i = 0; i < steps; i++) {
 			step(graph, time);
 			time++;
