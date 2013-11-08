@@ -38,6 +38,7 @@ var LAYOUT = (function(lib) {
 		var nodeCount = graph.getNodeCount();
 		for (var i = 0; i < nodeCount; i++) {
 			var node = graph.getNode(i);
+
 			// For each node...
 			// Nodes repel edges
 			var dist = [config.width - node.x, config.height - node.y, node.x, node.y];
@@ -46,16 +47,12 @@ var LAYOUT = (function(lib) {
 				score += config.boundaryWeight * 1/dist[distIndex];
 			}
 
-
-			for (var j = 0; j < nodeCount; j++) {
+			// Start at current node and loop over remaining in list
+			for (var j = i+1; j < nodeCount; j++) {
 				var tmpNode = graph.getNode(j);
-				if (tmpNode.id != node.id) { 
-
-					// For each pair of nodes...
-					// Nodes repel
-					score += config.closenessWeight * 1/Math.pow(getDist(node, tmpNode), 2);
-
-				}
+				// For each pair of nodes...
+				// Nodes repel
+				score += config.spreadApartWeight * 1/Math.pow(getDist(node, tmpNode), 2);
 			}
 		}
 

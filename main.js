@@ -1,7 +1,7 @@
 var config = {
 	width: 500,
 	height: 500,
-	closenessWeight: 1,
+	spreadApartWeight: 1,
 	boundaryWeight: 1
 };
 
