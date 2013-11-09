@@ -2,28 +2,22 @@ var LAYOUT = (function(lib) {
 
 	var config;
 
-	/*	Actions returns an array of actions, each representing where a 
-		specific node should move by providing a new node object with the
-		updated position 	*/
-	var getActions = function(graph, temp) {
-		var nodeCount = graph.getNodeCount();
-		var result = [];
-		for (var i = 0; i < nodeCount; i++) {
-			var node = graph.getNode(i);
-			var oldX = node.x;
-			var oldY = node.y;
-			result.push(
-				{id: i, x: oldX + 10, y: oldY},
-				{id: i, x: oldX - 10, y: oldY},
-				{id: i, x: oldX, y: oldY + 10},
-				{id: i, x: oldX, y: oldY - 10}
-			);
-		}
-		return result;
-	}
-
+	/*	Returns an action, representing where a specific node should move by 
+		providing a new node object with the updated position 	*/
 	var getRandomAction = function(graph, temp) {
 		// Pick a random node, move along the circle according to temp
+		var nodeCount = graph.getNodeCount();
+		var id = lib.randomBetween(0, nodeCount-1);
+		var oldNode = graph.getNode(id);
+		var angles = [	
+						{x: 0, y: 1}, {x: 0.5, y: 0.86}, {x: 0.86, y: 0.5}, 
+						{x: 1, y: 0}, {x: 0.86, y: -0.5}, {x: 0.5, y: -0.86}, 
+						{x: 0, y: -1}, {x: -0.5, y: -0.86}, {x: -0.86, y: -0.5},
+						{x: -1, y: 0}, {x: -0.86, y: 0.5}, {x: -0.5, y: 0.86}];
+		var angle = angles[lib.randomBetween(0,11)];
+		angle.x = angle.x * temp;
+		angle.y = angle.y * temp;
+		return {id: id, x: oldNode.x + angle.x, y: oldNode.y + angle.y};
 	}
 
 	// Todo: don't return a clone, return a graph modified and an undo action!
@@ -44,11 +38,17 @@ var LAYOUT = (function(lib) {
 			var node = graph.getNode(i);
 			// For each node...
 
-			// Nodes repel edges
-			var dist = [config.width - node.x, config.height - node.y, node.x, node.y];
-			for (var distIndex = 0; distIndex < 4; distIndex++) {
-				lib.assert(dist[distIndex]>0, "A node is on an edge (divide by 0)");
-				score += config.boundaryWeight * 1/dist[distIndex];
+			// Ensure it's still in the screen!
+			if (node.x > 0 && node.x < config.width && node.y > 0 && node.y < config.height) {
+				// Nodes repel edges
+				var dist = [config.width - node.x, config.height - node.y, node.x, node.y];
+				for (var distIndex = 0; distIndex < 4; distIndex++) {
+					// lib.assert(dist[distIndex]>0, "A node is on an edge (divide by 0)");
+					score += config.boundaryWeight * 1/dist[distIndex];
+				}
+			} else {
+				// If one is offscreen, score is awful.
+				score = Infinity;
 			}
 
 			// Edges should have minimum possible length
@@ -78,29 +78,27 @@ var LAYOUT = (function(lib) {
 	}
 	
 	var step = function(graph, temp) {
-		var actions = getActions(graph, temp);
-		var actionsCount = actions.length;
-		var bestAction;
-		var bestScore = Infinity;
-		for (var i = 0; i < actionsCount; i++) {
-			var action = actions[i];
-			var undoAction = applyAction(graph, action);
-			var score = getScore(graph);
-			// console.log(JSON.stringify(action) + " scores "+ score);
-			if (score < bestScore) {
-				// console.log("^^^ best so far");
-				bestScore = score;
-				bestAction = action;
-			}
+		var action = getRandomAction(graph, temp);
+		var score = getScore(graph);
+
+		var undoAction = applyAction(graph, action);
+		var newScore = getScore(graph);
+
+		// If the new score is worse (higher)
+		if (newScore > score) {
+			// Undo it with some probability
+			var random = Math.random();
+			var p = Math.exp((score - newScore)/temp);
 			applyAction(graph, undoAction);
 		}
-		applyAction(graph, bestAction);
+
+		return graph;
 	}
 
 	/*	This takes a graph and optimises it's layout. Ninja huh? */
 	var layout = function(graph) {
 		var temp = 100;
-		while (temp > 20) {
+		while (temp > 10) {
 			var steps = config.steps;
 			for (var i = 0; i < steps; i++) {
 				step(graph, temp);

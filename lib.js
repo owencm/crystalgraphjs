@@ -50,7 +50,8 @@ var LIB = (function() {
 	return { 
 		clone: clone,
 		assert: assert,
-		newFilledArray: newFilledArray
+		newFilledArray: newFilledArray,
+		randomBetween: randomBetween
 	};
 
 }());

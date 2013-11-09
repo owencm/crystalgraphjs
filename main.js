@@ -4,7 +4,7 @@ var config = {
 	steps: 30,
 	gamma: 0.75,
 	spreadApartWeight: 10,
-	boundaryWeight: 1,
+	boundaryWeight: 0.5,
 	edgeLengthWeight: 0.00000001
 };
 
@@ -22,3 +22,5 @@ LAYOUT.setConfig(config);
 
 LAYOUT.layout(GRAPH);
 VIEW.redraw(GRAPH);
+
+this.g = GRAPH;
