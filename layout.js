@@ -221,26 +221,26 @@ var LAYOUT = (function(lib, view) {
 		var undoAction = applyAction(graph, action);
 		var newCost = getCost(graph);
 
-		// if (newCost > oldCost) {
-		// 	applyAction(graph, undoAction)
-		// } else {
-		// 	console.log(oldCost);
-		// 	debug.push(lib.clone(graph.dumpState()));
-		// }
-
 		if (newCost > oldCost) {
-			var random = Math.random();
-			var p = Math.exp((oldCost - newCost)/deg);
-			if (random > p) {
-				// Undo the bad action
-				applyAction(graph, undoAction);
-			} else {
-			console.log("Time: "+deg+" Old: "+oldCost+" new: "+newCost+" p: "+p);
-
-				console.log("Take the bad action");
-				debug.push(lib.clone(graph.dumpState()));
-			}
+			applyAction(graph, undoAction)
+		} else {
+			console.log(oldCost);
+			debug.push(lib.clone(graph.dumpState()));
 		}
+
+		// if (newCost > oldCost) {
+		// 	var random = Math.random();
+		// 	var p = Math.exp((oldCost - newCost)/deg);
+		// 	if (random > p) {
+		// 		// Undo the bad action
+		// 		applyAction(graph, undoAction);
+		// 	} else {
+		// 	console.log("Time: "+deg+" Old: "+oldCost+" new: "+newCost+" p: "+p);
+
+		// 		console.log("Take the bad action");
+		// 		debug.push(lib.clone(graph.dumpState()));
+		// 	}
+		// }
 
 		return graph;
 	}

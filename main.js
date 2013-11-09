@@ -1,15 +1,15 @@
 var config = {
 	width: 500,
 	height: 500,
-	stepMultiple: 100,
-	initialDeg: 10,
-	finalDeg: 1,
+	stepMultiple: 10,
+	initialDeg: 250,
+	finalDeg: 5,
 	gamma: 0.75,
 	spreadApartWeight: 5000,
 	boundaryWeight: 1000,
 	edgeLengthWeight: 0.002,
 	distFromLinesWeight: 5,
-	lineIntersectionWeight: 2000,
+	lineIntersectionWeight: 1500,
 	minDist: 5
 };
 
