@@ -42,6 +42,11 @@ var LIB = (function() {
 		return result;
 	}
 
+	function randomBetween(from, to)
+	{
+	    return Math.floor(Math.random()*(to-from+1)+from);
+	}
+
 	return { 
 		clone: clone,
 		assert: assert,

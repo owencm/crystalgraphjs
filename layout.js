@@ -5,7 +5,7 @@ var LAYOUT = (function(lib) {
 	/*	Actions returns an array of actions, each representing where a 
 		specific node should move by providing a new node object with the
 		updated position 	*/
-	var getActions = function(graph, time) {
+	var getActions = function(graph, temp) {
 		var nodeCount = graph.getNodeCount();
 		var result = [];
 		for (var i = 0; i < nodeCount; i++) {
@@ -20,6 +20,10 @@ var LAYOUT = (function(lib) {
 			);
 		}
 		return result;
+	}
+
+	var getRandomAction = function(graph, temp) {
+		// Pick a random node, move along the circle according to temp
 	}
 
 	// Todo: don't return a clone, return a graph modified and an undo action!
@@ -73,8 +77,8 @@ var LAYOUT = (function(lib) {
 		return score;
 	}
 	
-	var step = function(graph, time) {
-		var actions = getActions(graph, time);
+	var step = function(graph, temp) {
+		var actions = getActions(graph, temp);
 		var actionsCount = actions.length;
 		var bestAction;
 		var bestScore = Infinity;
@@ -95,11 +99,13 @@ var LAYOUT = (function(lib) {
 
 	/*	This takes a graph and optimises it's layout. Ninja huh? */
 	var layout = function(graph) {
-		var time = 0;
-		var steps = config.steps;
-		for (var i = 0; i < steps; i++) {
-			step(graph, time);
-			time++;
+		var temp = 100;
+		while (temp > 20) {
+			var steps = config.steps;
+			for (var i = 0; i < steps; i++) {
+				step(graph, temp);
+			}
+			temp = config.gamma * temp;
 		}
 		return graph;
 	}
