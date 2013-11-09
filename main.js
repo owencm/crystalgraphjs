@@ -1,12 +1,15 @@
 var config = {
 	width: 500,
 	height: 500,
-	stepMultiple: 10,
+	stepMultiple: 100,
+	initialDeg: 10,
+	finalDeg: 1,
 	gamma: 0.75,
 	spreadApartWeight: 5000,
 	boundaryWeight: 1000,
-	edgeLengthWeight: 0.001,
+	edgeLengthWeight: 0.002,
 	distFromLinesWeight: 5,
+	lineIntersectionWeight: 2000,
 	minDist: 5
 };
 
@@ -32,6 +35,14 @@ for (var i = 0; i < nodeCount; i++) {
 	}
 }
 
+// var nodeCount = LIB.randomBetween(10, 20);
+// for (var i = 0; i < nodeCount; i++) {
+// 	GRAPH.addNode(LIB.randomBetween(1, 499), LIB.randomBetween(1, 499));
+// }
+// for (var i = 0; i < nodeCount; i++) {
+// 	GRAPH.setEdge(i, (i+1)%nodeCount, 1);
+// }
+
 LAYOUT.setConfig(config);
 
 var steps = [];
@@ -45,4 +56,4 @@ setInterval(function() {
 		VIEW.redraw(GRAPH);
 		i++;
 	}
-}, 200);
+}, 100);
