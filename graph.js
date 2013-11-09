@@ -1,31 +1,45 @@
 var GRAPH = (function(lib) {
 
-	var adj = [];
-
+	var edges = [];
 	var nodes = {};
-
 	var nodeCount = 0;
 
-	var getNodeCount = function() {
-		return nodeCount;
-	}
-
-	var addNode = function(x, y) {
-		nodes[nodeCount] = {x: x, y: y};
-		// Add a new column of 0s on the right of the adj matrix
-		// i is the row index
-		for (var i = 0; i <adj.length; i++) {
-			adj[i].push(0);
+	// This returns an array of [{node: {..}, strength: x}]
+	var getAdj = function(id) {
+		var sNodes = [];
+		var edgeCount = edges.length;
+		// For each node, check for a connection
+		for (var i = 0; i < edgeCount; i++) {
+			var edge = edges[i];
+			if (edge.a == id) {
+				sNodes.push({node: getNode(edge.b), strength: edge.strength});
+			} else if(edge.b == id) {
+				sNodes.push({node: getNode(edge.a), strength: edge.strength});
+			}
 		}
-		nodeCount++;
-		// Add a new row of 0s at the bottom of the adj matrix
-		var row = lib.newFilledArray(nodeCount, 0);
-		adj.push(row);
+		return sNodes;
 	}
 
-	var setAdj = function(id1, id2, value) {
-		adj[id1][id2] = value;
-		adj[id2][id1] = value;
+	var getEdges = function() {
+		return edges;
+	}
+
+	var setEdge = function(id1, id2, strength) {
+		if (id1 > id2) {
+			var swap = id1;
+			id1 = id2;
+			id2 = swap;
+		}
+		var edgeCount = edges.length;
+		for (var i = 0; i < edgeCount; i++) {
+			var edge = edges[i];
+			if (edge.a == id1 && edge.b == id2) {
+				console.log("Edge overwritten");
+				edge.strength = strength;
+				return;
+			}
+		}
+		edges.push({a: id1, b: id2, strength: strength});
 	}
 
 	var getNode = function(id) {
@@ -34,16 +48,13 @@ var GRAPH = (function(lib) {
 		return sNode;
 	}
 
-	// This returns an array of nodes and their adjascency to the node with id=id
-	var getAdj = function(id) {
-		var sNodes = [];
-		// For each node, check for a connection
-		for (var i = 0; i < getNodeCount(); i++) {
-			if (adj[i][id] > 0) {
-				sNodes.push(getNode(i));
-			}
-		}
-		return sNodes;
+	var addNode = function(x, y) {
+		nodes[nodeCount] = {x: x, y: y};
+		nodeCount++;
+	}
+
+	var getNodeCount = function() {
+		return nodeCount;
 	}
 
 	var update = function(sNode) {
@@ -51,19 +62,26 @@ var GRAPH = (function(lib) {
 		nodes[id] = {x: sNode.x, y: sNode.y};
 	}
 
-	var debug = function() {
-		console.log(JSON.stringify(nodes));
-		console.log(JSON.stringify(adj));
+	var dumpState = function() {
+		return {nodeCount: nodeCount, nodes: nodes, edges: edges};
+	}
+
+	var loadState = function(state) {
+		nodeCount = state.nodeCount;
+		nodes = state.nodes;
+		edges = state.edges;
 	}
 
 	return { 
 		getAdj: getAdj,
-		setAdj: setAdj,
+		getEdges: getEdges,
+		setEdge: setEdge,
 		getNode: getNode,
 		addNode: addNode,
 		getNodeCount: getNodeCount,
 		update: update,
-		debug: debug
+		dumpState: dumpState,
+		loadState: loadState
 	};
 
 }(LIB));

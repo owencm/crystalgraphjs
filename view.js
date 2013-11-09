@@ -1,20 +1,22 @@
 var VIEW = (function(lib) {
 
-	var nodeRadius = 25;
+	var nodeRadius = 5;
 
 	var canvas = document.getElementById("canvas");
 	var ctx = canvas.getContext('2d');
 
 	// Draw a circle
 	var drawCircle = function(x, y, r) {
-		ctx.fillStyle = "rgb(255,255,255)";
+		ctx.fillStyle = "rgb(255,255,255)"
+		ctx.strokeStyle = "rgb(0,0,0)";
 		ctx.beginPath();
 		ctx.arc(x, y, r, 0, 2*Math.PI);
 		ctx.fill();
 		ctx.stroke();
 	}
 
-	var drawLine = function(x1, y1, x2, y2) {
+	var drawLine = function(x1, y1, x2, y2, alpha) {
+		ctx.strokeStyle = "rgba(0,0,0,"+alpha+")";
 		ctx.beginPath();
 		ctx.moveTo(x1, y1);
 		ctx.lineTo(x2, y2);
@@ -28,8 +30,8 @@ var VIEW = (function(lib) {
 			var node = graph.getNode(i);
 			var adjascentNodes = graph.getAdj(i);
 			for (var j = 0; j < adjascentNodes.length; j++) {
-				var tempNode = graph.getNode(adjascentNodes[j].id);
-				drawLine(node.x, node.y, tempNode.x, tempNode.y);
+				var tempNode = graph.getNode(adjascentNodes[j].node.id);
+				drawLine(node.x, node.y, tempNode.x, tempNode.y, Math.min(adjascentNodes[j].strength),0.2);
 			}
 		}
 
