@@ -6,7 +6,7 @@ var config = {
 	finalDeg: 5,
 	gamma: 0.75,
 	spreadApartWeight: 5000,
-	boundaryWeight: 1000,
+	boundaryWeight: 10000,
 	edgeLengthWeight: 0.002,
 	distFromLinesWeight: 5,
 	lineIntersectionWeight: 1500,
